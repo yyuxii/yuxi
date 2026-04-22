@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>yuxi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0c0c;
+      --surface: #141414;
+      --border: #222;
+      --text: #d4d0c8;
+      --muted: #555;
+      --accent: #c8f060;
+      --accent2: #60c8f0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: .5;
+    }
+
+    .container {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 80px 24px 120px;
+    }
+
+    /* header */
+    header {
+      margin-bottom: 80px;
+      opacity: 0;
+      animation: fadeUp .6s ease forwards;
+    }
+
+    .name {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(42px, 8vw, 72px);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1;
+      color: #fff;
+    }
+
+    .name span { color: var(--accent); }
+
+    .tagline {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      font-style: italic;
+    }
+
+    /* nav */
+    nav {
+      margin-top: 32px;
+      display: flex;
+      gap: 24px;
+      opacity: 0;
+      animation: fadeUp .6s ease .1s forwards;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: color .2s;
+      position: relative;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width .2s;
+    }
+
+    nav a:hover { color: var(--accent); }
+    nav a:hover::after { width: 100%; }
+
+    /* sections */
+    section {
+      margin-bottom: 72px;
+      opacity: 0;
+      animation: fadeUp .6s ease forwards;
+    }
+
+    section:nth-of-type(1) { animation-delay: .2s; }
+    section:nth-of-type(2) { animation-delay: .3s; }
+    section:nth-of-type(3) { animation-delay: .4s; }
+    section:nth-of-type(4) { animation-delay: .5s; }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* about */
+    .about-text {
+      color: var(--text);
+      font-size: 14px;
+      max-width: 540px;
+    }
+
+    /* stack */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 8px;
+    }
+
+    .stack-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--muted);
+      transition: border-color .2s, color .2s;
+    }
+
+    .stack-item:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .stack-item .lang {
+      color: var(--accent2);
+      display: block;
+      font-size: 11px;
+      margin-bottom: 2px;
+    }
+
+    /* projects */
+    .project {
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 12px;
+      transition: border-color .2s, transform .2s;
+      cursor: default;
+    }
+
+    .project:hover {
+      border-color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .project-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .project-lang {
+      font-size: 11px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+    }
+
+    .project-desc {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .project-link {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .project-link:hover { text-decoration: underline; }
+
+    /* contact */
+    .contact-line {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .contact-line a {
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      transition: color .2s, border-color .2s;
+    }
+
+    .contact-line a:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* footer */
+    footer {
+      margin-top: 100px;
+      font-size: 11px;
+      color: var(--border);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .stack-grid { grid-template-columns: 1fr 1fr; }
+      nav { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="name">yu<span>xi</span></div>
+    <p class="tagline">// software dev · france</p>
+    <nav>
+      <a href="#about">about</a>
+      <a href="#projects">projects</a>
+      <a href="#contact">contact</a>
+      <a href="https://github.com/yuxi" target="_blank">github ↗</a>
+    </nav>
+  </header>
+
+  <section id="about">
+    <div class="section-label">about</div>
+    <p class="about-text">
+      i write code to solve small problems and understand bigger ones.
+      mostly self-taught, mostly python and javascript. i like tools
+      that do one thing well and scripts that save me ten minutes a week.
+    </p>
+    <p class="about-text" style="margin-top:14px;">
+      based in france. open to interesting projects.
+    </p>
+  </section>
+
+  <section id="stack">
+    <div class="section-label">stack</div>
+    <div class="stack-grid">
+      <div class="stack-item"><span class="lang">lang</span>Python</div>
+      <div class="stack-item"><span class="lang">lang</span>JavaScript</div>
+      <div class="stack-item"><span class="lang">lang</span>TypeScript</div>
+      <div class="stack-item"><span class="lang">lang</span>Bash</div>
+      <div class="stack-item"><span class="lang">frontend</span>React</div>
+      <div class="stack-item"><span class="lang">frontend</span>HTML / CSS</div>
+      <div class="stack-item"><span class="lang">backend</span>Node.js</div>
+      <div class="stack-item"><span class="lang">backend</span>FastAPI</div>
+      <div class="stack-item"><span class="lang">tools</span>Git</div>
+      <div class="stack-item"><span class="lang">tools</span>Docker</div>
+      <div class="stack-item"><span class="lang">tools</span>Linux</div>
+      <div class="stack-item"><span class="lang">tools</span>VSCode</div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="section-label">projects</div>
+
+    <div class="project">
+      <div class="project-header">
+        <span class="project-name">todo-cli</span>
+        <span class="project-lang">Python</span>
+      </div>
+      <p class="project-desc">minimal task manager for the terminal. no dependencies. stores tasks in a local JSON file.</p>
+      <a class="project-link" href="https://github.com/yuxi/todo-cli" target="_blank">view on github →</a>
+    </div>
+
+    <div class="project">
+      <div class="project-header">
+        <span class="project-name">scrapy-news</span>
+        <span class="project-lang">Python</span>
+      </div>
+      <p class="project-desc">pulls headlines from RSS feeds (HN, The Verge, Ars Technica) and prints them in the terminal. stdlib only.</p>
+      <a class="project-link" href="https://github.com/yuxi/scrapy-news" target="_blank">view on github →</a>
+    </div>
+
+    <div class="project">
+      <div class="project-header">
+        <span class="project-name">weather-dash</span>
+        <span class="project-lang">JavaScript</span>
+      </div>
+      <p class="project-desc">weather dashboard using the open-meteo API. shows current conditions and a 7-day forecast. no API key needed.</p>
+      <a class="project-link" href="https://github.com/yuxi/weather-dash" target="_blank">view on github →</a>
+    </div>
+
+    <div class="project">
+      <div class="project-header">
+        <span class="project-name">portfolio</span>
+        <span class="project-lang">HTML / CSS</span>
+      </div>
+      <p class="project-desc">this site. hand-coded, no framework, no build step.</p>
+      <a class="project-link" href="https://github.com/yuxi/portfolio" target="_blank">view on github →</a>
+    </div>
+
+  </section>
+
+  <section id="contact">
+    <div class="section-label">contact</div>
+    <p class="contact-line">github → <a href="https://github.com/yuxi" target="_blank">github.com/yuxi</a></p>
+    <p class="contact-line">mail → <a href="mailto:yuxi.dev@proton.me">yuxi.dev@proton.me</a></p>
+  </section>
+
+  <footer>
+    <span>yuxi · 2024</span>
+    <span>hand-coded · no framework</span>
+  </footer>
+
+</div>
+</body>
+</html>
